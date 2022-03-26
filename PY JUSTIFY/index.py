@@ -37,17 +37,11 @@ class Solution:
         for line in "".join(self.row).splitlines():
             self.temp.append(self.add_space(line.rstrip()))
 
-        # fw = open("odst.out", "a")
         for i in range(len(self.temp) - 1):
-            # fw.write(self.temp[i] + "\n")
             print(self.temp[i])
         try:
-            # fw.write(" ".join(self.temp[-1].split()))
-            # fw.write("\n")
-            print(" ".join(self.temp[-1].split()))
-            # print("\n")
+            print(" ".join(self.temp[-1].split()) + '\n')
         except:
-            # fw.write("")
             print("")
 
     def justifyLast(self):
@@ -63,22 +57,15 @@ class Solution:
         for line in "".join(self.row).splitlines():
             self.temp.append(self.add_space(line.rstrip()))
 
-        fw = open("odst.out", "a")
         for i in range(len(self.temp) - 1):
-            # fw.write(self.temp[i] + "\n")
             print(self.temp[i])
         try:
-            # fw.write(" ".join(self.temp[-1].split()))
-            # fw.write("\n")
-            print(" ".join(self.temp[-1].split()))
-            # print("\n")
+            print(" ".join(self.temp[-1].split()) + '\n')
         except:
-            # fw.write("")
             print("")
 
 
-f = open("INPUT", "r")
-open('odst.out', 'w').close()
+f = open(sys.argv[2], "r")
 
 widthLength = sys.argv[1]
 
@@ -95,13 +82,11 @@ widthLength = int(widthLength)
 content = ''
 isSpace = False
 
-countParagraph = 0
 newParagraf = False
 countNewLineChar = 0
 
 while True:
         c = f.read(1)
-        # c = sys.stdin.read(1)
         if not c:
             break
 
@@ -117,33 +102,22 @@ while True:
                 s1 = Solution(content.rstrip(), widthLength)
                 s1.justify()
             content = ''
-            countParagraph = 1
             countNewLineChar = 0
             newParagraf = False
         else:
             if(c.isspace() and isSpace):
                 pass
             elif(c == '\n'):
-                pass
-            else:
                 if(countNewLineChar == 1):
                     content += ' '
-                else:
-                    content += c
+            else:
+                content += c
                 countNewLineChar = 0
-                if(countParagraph == 1):
-                    countParagraph = 0
-                    # fw = open("odst.out", "a")
-                    # fw.write("\n")
-                    # fw.close()     
-                    print("\n")            
-
             if(c.isspace()):
                 isSpace = True
             else:
                 isSpace = False
             
 
-s1 = Solution(content.rstrip(), widthLength)
-s1.justifyLast()
-
+s2 = Solution(content.rstrip(), widthLength)
+s2.justifyLast()

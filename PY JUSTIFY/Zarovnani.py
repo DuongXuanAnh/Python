@@ -1,4 +1,3 @@
-
 class Solution:
     def __init__(self, content, width):
         self.pole = content.split()
@@ -105,12 +104,11 @@ while True:
             if(c.isspace() and isSpace):
                 pass
             elif(c == '\n'):
-                pass
-            else:
                 if(countNewLineChar == 1):
                     content += ' '
-                else:
-                    content += c
+                pass
+            else:
+                content += c
                 countNewLineChar = 0
                 if(countParagraph == 1):
                      countParagraph = 0
