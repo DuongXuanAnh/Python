@@ -35,13 +35,13 @@ def calculatePosfix(exp):
 #     if(len(line) > 0):
 #         print(calculatePosfix(line))
 
-for line in sys.stdin:
-    if(line.strip()):
-        print(calculatePosfix(line))
-
-
-# f = open(sys.argv[1], "r")
-# Lines = f.readlines()
-# for line in Lines:
+# for line in sys.stdin:
 #     if(line.strip()):
 #         print(calculatePosfix(line))
+
+
+f = open(sys.argv[1], "r")
+Lines = f.readlines()
+for line in Lines:
+    if(line.strip()):
+        print(calculatePosfix(line))

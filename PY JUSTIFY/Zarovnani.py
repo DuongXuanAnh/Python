@@ -1,3 +1,5 @@
+import sys
+
 class Solution:
     def __init__(self, content, width):
         self.pole = content.split()
@@ -15,7 +17,10 @@ class Solution:
             try:
                 temp_pole[i] = temp_pole[i] + " "
             except:
-                return temp_pole[0]
+                try:
+                    return temp_pole[0]
+                except:
+                    return "NO"
             i += 1
             if i == len(line.split())-1:
                 i = 0
@@ -33,7 +38,10 @@ class Solution:
                 self.count = self.const_count - (len(self.pole[i])+1)
 
         for line in "".join(self.row).splitlines():
-            self.temp.append(self.add_space(line.rstrip()))
+            if (self.add_space(line.rstrip()) == "NO"):
+                pass
+            else:
+                self.temp.append(self.add_space(line.rstrip()))
 
         fw = open("odst.out", "a")
         for i in range(len(self.temp) - 1):
@@ -56,7 +64,10 @@ class Solution:
                 self.count = self.const_count - (len(self.pole[i])+1)
 
         for line in "".join(self.row).splitlines():
-            self.temp.append(self.add_space(line.rstrip()))
+            if (self.add_space(line.rstrip()) == "NO"):
+                pass
+            else:
+                self.temp.append(self.add_space(line.rstrip()))
 
         fw = open("odst.out", "a")
         for i in range(len(self.temp) - 1):
@@ -71,7 +82,7 @@ class Solution:
 f = open("INPUT", "r")
 open('odst.out', 'w').close()
 
-widthLength = 70
+widthLength = int(sys.argv[1])
 
 content = ''
 isSpace = False

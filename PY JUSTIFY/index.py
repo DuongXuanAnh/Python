@@ -7,7 +7,6 @@ class Solution:
         self.temp = []
         self.const_count = width
     
-
     def add_space(self, line):
         miss_space = self.const_count - len(line)
         temp_pole = line.split()
@@ -16,7 +15,10 @@ class Solution:
             try:
                 temp_pole[i] = temp_pole[i] + " "
             except:
-                return temp_pole[0]
+                try:
+                    return temp_pole[0]
+                except:
+                    return "NO"
             i += 1
             if i == len(line.split())-1:
                 i = 0
@@ -25,7 +27,7 @@ class Solution:
 
     def justify(self):
         for i in range(len(self.pole)):
-            if len(self.pole[i])+1 <=  self.count+1:
+            if len(self.pole[i])+1 <= self.count+1:
                 self.row.append(self.pole[i]+" ")
                 self.count -= (len(self.pole[i])+1)
             else:
@@ -33,15 +35,21 @@ class Solution:
                 self.row.append(self.pole[i]+" ")
                 self.count = self.const_count - (len(self.pole[i])+1)
 
-        for line in "".join(self.row).splitlines():
-            self.temp.append(self.add_space(line.rstrip()))
-
-        for i in range(len(self.temp) - 1):
-            print(self.temp[i])
         try:
-            print(" ".join(self.temp[-1].split()) + '\n')
+            for line in "".join(self.row).splitlines():
+                if (self.add_space(line.rstrip()) == "NO"):
+                    pass
+                else:
+                    self.temp.append(self.add_space(line.rstrip()))
+
+            for i in range(len(self.temp) - 1):
+                print(self.temp[i])
+            try:
+                print(" ".join(self.temp[-1].split()) + '\n')
+            except:
+                print("")
         except:
-            print("")
+            pass
 
     def justifyLast(self):
         for i in range(len(self.pole)):
@@ -52,21 +60,24 @@ class Solution:
                 self.row.append("\n")
                 self.row.append(self.pole[i]+" ")
                 self.count = self.const_count - (len(self.pole[i])+1)
-
-        for line in "".join(self.row).splitlines():
-            self.temp.append(self.add_space(line.rstrip()))
-
-        for i in range(len(self.temp) - 1):
-            print(self.temp[i])
         try:
-            print(" ".join(self.temp[-1].split()) + '\n')
+            for line in "".join(self.row).splitlines():
+                if (self.add_space(line.rstrip()) == "NO"):
+                    pass
+                else:
+                    self.temp.append(self.add_space(line.rstrip()))
+
+            for i in range(len(self.temp) - 1):
+                print(self.temp[i])
+            try:
+                print(" ".join(self.temp[-1].split()))
+            except:
+                print("")
         except:
-            print("")
+            pass
 
 
 widthLength = sys.argv[1]
-
-# f = open("INPUT", "r")
 
 if(widthLength.isdigit()):
     pass
@@ -85,7 +96,6 @@ newParagraf = False
 countNewLineChar = 0
 
 while True:
-        # c = f.read(1)
         c = sys.stdin.read(1)
         if not c:
             break
