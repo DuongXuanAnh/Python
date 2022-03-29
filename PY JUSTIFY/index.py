@@ -1,5 +1,4 @@
 import sys
-
 class Solution:
     def __init__(self, content, width):
         self.pole = content.split()
@@ -65,9 +64,9 @@ class Solution:
             print("")
 
 
-f = open(sys.argv[2], "r")
-
 widthLength = sys.argv[1]
+
+# f = open("INPUT", "r")
 
 if(widthLength.isdigit()):
     pass
@@ -86,7 +85,8 @@ newParagraf = False
 countNewLineChar = 0
 
 while True:
-        c = f.read(1)
+        # c = f.read(1)
+        c = sys.stdin.read(1)
         if not c:
             break
 
