@@ -1,6 +1,5 @@
 import sys
 
-
 class Person:
     def __init__(self, smer, pozice, pocetKroku):
         self.smer = smer
@@ -15,19 +14,19 @@ class Person:
             else:
                 self.pozice = [self.pozice[0], self.pozice[1] + 1]
                 self.pocetKroku -= 1
-        if self.smer == 'v':
+        elif self.smer == 'v':
             if self.OtocilSe():
                 pass
             else:
                 self.pozice = [self.pozice[0] + 1, self.pozice[1]]
                 self.pocetKroku -= 1
-        if self.smer == '<':
+        elif self.smer == '<':
             if self.OtocilSe():
                 pass
             else:
                 self.pozice = [self.pozice[0], self.pozice[1] - 1]
                 self.pocetKroku -= 1
-        if self.smer == '^':
+        elif self.smer == '^':
             if self.OtocilSe():
                 pass
             else:
@@ -43,6 +42,8 @@ class Person:
             return True
         if self.smer == '^' and Maze[self.pozice[0] - 1][self.pozice[1]] == '#':
             return True
+        
+        return False
     
     def JeVpravoPrekazka(self):
         if self.smer == '>' and Maze[self.pozice[0] + 1][self.pozice[1]] == '#':
@@ -54,6 +55,8 @@ class Person:
         if self.smer == '^' and Maze[self.pozice[0]][self.pozice[1] + 1] == '#':
             return True
 
+        return False
+    
     def JeVlevoPrekazka(self):
         if self.smer == '>' and Maze[self.pozice[0] - 1][self.pozice[1]] == '#':
             return True
@@ -63,6 +66,8 @@ class Person:
             return True
         if self.smer == '^' and Maze[self.pozice[0]][self.pozice[1] - 1] == '#':
             return True
+        
+        return False
 
     def OtocilSe(self):
         smer = ['>', 'v' ,'<', '^']
@@ -73,13 +78,21 @@ class Person:
                         person.smer = smer[(i-1)%4]
                         return True
                 
-            if self.JeVlevoPrekazka():
+            elif self.JeVlevoPrekazka():
                 for i in range(len(smer)):
                     if(person.smer == smer[i]):
                         person.smer = smer[(i+1)%4]
                         return True  
-        
         return False
+    
+    def SmerBezPravyZdi(self):
+        smer = ['>', 'v' ,'<', '^']
+        if(person.JeVpravoPrekazka() is False):
+            for i in range(len(smer)):
+                if(person.smer == smer[i]):
+                    person.smer = smer[(i+1)%4]
+                    break
+
 
 person = None
 
@@ -94,12 +107,16 @@ for i in range(len(Maze)):
         for j in range(len(Maze[i])):
             if Maze[i][j] == '>':
                 person = Person('>', [i, j], move)
-            if Maze[i][j] == 'v':
+                break
+            elif Maze[i][j] == 'v':
                 person = Person('v', [i, j], move)
-            if Maze[i][j] == '<':
+                break
+            elif Maze[i][j] == '<':
                 person = Person('<', [i, j], move)
-            if Maze[i][j] == '^':
+                break
+            elif Maze[i][j] == '^':
                 person = Person('^', [i, j], move)
+                break
 
 def printMaze():
     Maze[person.poziceOrigin[0]][person.poziceOrigin[1]] = '.'
@@ -108,7 +125,9 @@ def printMaze():
         print(' '.join(Maze[i]))
 
 
+
 while(person.pocetKroku > 0):
+    person.SmerBezPravyZdi()
     person.UdelejKrokDoPredu()
 
 
