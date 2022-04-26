@@ -33,6 +33,7 @@ class PrikazHandler:
         elif prikaz == 'coldestcity':
             self.fistRankCity(parametry, 'coldestcity')
         elif prikaz == 'graphtemp':
+            self.graphGenerate(parametry)
             pass
         elif prikaz == 'graphpressure':
             pass
@@ -90,7 +91,7 @@ class PrikazHandler:
             max = -1000
             maxDate = 0
             for date in data[city]:
-                if int(start) < int(date) < int(end):
+                if int(start) <= int(date) <= int(end):
                     if data[city][date][info] > max:
                         max = data[city][date][info]
                         maxDate = date
@@ -146,10 +147,64 @@ class PrikazHandler:
             coldestDate = result['date']
             print(f'city:{coldestCity} date:{coldestDate} temp:{min}')
 
-prikazy = ['temp', 'humidity', 'pressure', 'maxtemp', 'maxhumidity', 'maxpressure', 'warmestcity' , 'coldestcity', 'graphtemp',
-'graphpressure']
+    def graphGenerate(self, parametry):
+        params = {'city': '', 'date': -1, 'startdate': -1, 'enddate': -1}
+        for p in parametry:
+            if p.split(':')[0] == 'city':
+                params['city'] = p.split(':')[1]
+            elif p.split(':')[0] == 'date':
+                params['date'] = p.split(':')[1]
+            elif p.split(':')[0] == 'startdate':
+                params['startdate'] = p.split(':')[1]
+            elif p.split(':')[0] == 'enddate':
+                params['enddate'] = p.split(':')[1]
+        
+        city = params['city']
+        start = params['startdate']
+        end = params['enddate']
 
-parametr = ['city', 'date', 'startdate', 'enddate']
+        if(city == '' or start == '' or end == ''):
+            print('Invalid input')
+           
+        else:
+            maxTemp = -1000
+            minTemp = 1000
+            dateCount = 0
+            for date in data[city]:
+                if int(start) <= int(date) <= int(end):
+                    dateCount += 1
+                    if maxTemp < data[city][date]['temp']:
+                        maxTemp = data[city][date]['temp']
+                    if minTemp > data[city][date]['temp']:
+                        minTemp = data[city][date]['temp']
+            
+            step = (maxTemp - minTemp) / 19
+
+            arrValueCol = []
+
+            for date in data[city]:
+                if int(start) <= int(date) <= int(end):
+                    t = data[city][date]['temp']
+                    n = round((t-minTemp) / step) + 1
+                    arrValueCol.append(n)
+
+            arr = []
+        
+            for i in range (len(arrValueCol)):
+                poleTmp = [' ']*20
+                for j in range(arrValueCol[i]):
+                    poleTmp[j] = '#'
+                arr.append(poleTmp)
+
+            arr = [*zip(*arr)] #transpose
+
+            for i in range (len(arr)-1, -1, -1):
+                for j in range (len(arr[i])):
+                    print(arr[i][j], end='')
+                print('\n')
+      
+
+
 
 pole_kompletnichPrikazu = []
 
