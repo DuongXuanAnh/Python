@@ -33,10 +33,10 @@ class PrikazHandler:
         elif prikaz == 'coldestcity':
             self.fistRankCity(parametry, 'coldestcity')
         elif prikaz == 'graphtemp':
-            self.graphGenerate(parametry)
-            pass
+            self.graphGenerate(parametry, 'temp')
+
         elif prikaz == 'graphpressure':
-            pass
+            self.graphGenerate(parametry, 'ap')
         else:
             print('Invalid input')
     
@@ -147,7 +147,7 @@ class PrikazHandler:
             coldestDate = result['date']
             print(f'city:{coldestCity} date:{coldestDate} temp:{min}')
 
-    def graphGenerate(self, parametry):
+    def graphGenerate(self, parametry, info):
         params = {'city': '', 'date': -1, 'startdate': -1, 'enddate': -1}
         for p in parametry:
             if p.split(':')[0] == 'city':
@@ -173,38 +173,81 @@ class PrikazHandler:
             for date in data[city]:
                 if int(start) <= int(date) <= int(end):
                     dateCount += 1
-                    if maxTemp < data[city][date]['temp']:
-                        maxTemp = data[city][date]['temp']
-                    if minTemp > data[city][date]['temp']:
-                        minTemp = data[city][date]['temp']
+                    if maxTemp < data[city][date][info]:
+                        maxTemp = data[city][date][info]
+                    if minTemp > data[city][date][info]:
+                        minTemp = data[city][date][info]
             
-            step = (maxTemp - minTemp) / 19
+            if(dateCount <= 50):
+                sloupce =[]
+                for date in data[city]:
+                    if int(start) <= int(date) <= int(end):
+                        sloupce.append(data[city][date][info])
+                
+                self.vykrasiGraph(sloupce)       
 
-            arrValueCol = []
+            else:
 
-            for date in data[city]:
-                if int(start) <= int(date) <= int(end):
-                    t = data[city][date]['temp']
-                    n = round((t-minTemp) / step) + 1
-                    arrValueCol.append(n)
+                average = dateCount % 50
 
-            arr = []
+                n1 = (dateCount//50) + 1
+                n2 = (dateCount//50)
+
+                tmp = []
+                sloupce = []
+
+                for date in data[city]:
+                    if int(start) <= int(date) <= int(end):
+
+                        tmp.append(data[city][date][info])
+
+                        if average > 0:
+                            if len(tmp) == n1:
+                                sloupce.append((int)(sum(tmp))/n1)
+                                tmp = []
+                                average -= 1
+                        
+                        else:
+                            if len(tmp) == n2:
+                                sloupce.append((int)(sum(tmp))/n2)
+                                tmp = []
+
+                # print(sloupce)       
+                self.vykrasiGraph(sloupce)
+
+    def vykrasiGraph(self, pole):
+        maxTemp = -1000
+        minTemp = 1000
+        for value in pole:
+                if maxTemp < value:
+                    maxTemp = value
+                if minTemp > value:
+                    minTemp = value
         
-            for i in range (len(arrValueCol)):
-                poleTmp = [' ']*20
-                for j in range(arrValueCol[i]):
-                    poleTmp[j] = '#'
-                arr.append(poleTmp)
+    
+        step = (maxTemp - minTemp) / 19
 
-            arr = [*zip(*arr)] #transpose
+        arrValueCol = []
 
-            for i in range (len(arr)-1, -1, -1):
-                for j in range (len(arr[i])):
-                    print(arr[i][j], end='')
-                print('\n')
-      
+        for value in pole:
+            t = value
+            n = round((t-minTemp) / step) + 1
+            arrValueCol.append(n)
 
+        arr = []
+    
+        for i in range (len(arrValueCol)):
+            poleTmp = [' ']*20
+            for j in range(arrValueCol[i]):
+                poleTmp[j] = '#'
+            arr.append(poleTmp)
 
+        arr = [*zip(*arr)] #transpose
+
+        for i in range (len(arr)-1, -1, -1):
+            for j in range (len(arr[i])):
+                print(arr[i][j], end='')
+            print('', end='\n')
 
 pole_kompletnichPrikazu = []
 
@@ -222,5 +265,8 @@ f.close()
 
 for line in sys.stdin:
     p = PrikazHandler(line)
-    p.PrijmouPrikaz()
+    try:
+        p.PrijmouPrikaz()
+    except:
+        pass
 
