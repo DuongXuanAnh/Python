@@ -34,56 +34,61 @@ class PrikazHandler:
             self.fistRankCity(parametry, 'coldestcity')
         elif prikaz == 'graphtemp':
             self.graphGenerate(parametry, 'temp')
-
         elif prikaz == 'graphpressure':
             self.graphGenerate(parametry, 'ap')
         else:
             print('Invalid input')
+
+    def paramsResolver(self, parametry):
+        params = {'city': '', 'date': -1, 'startdate': -1, 'enddate': -1}
+
+        for p in parametry:
+            if p.split(':')[0] == 'city':
+                params['city'] = p.split(':')[1]
+            elif p.split(':')[0] == 'date':
+                params['date'] = p.split(':')[1]
+            elif p.split(':')[0] == 'startdate':
+                params['startdate'] = p.split(':')[1]
+            elif p.split(':')[0] == 'enddate':
+                params['enddate'] = p.split(':')[1]
+            else:
+                return 0
+
+        return params
     
     def showBasicInfo(self, parametry, info):
-        params = {'city': '', 'date': -1, 'startdate': -1, 'enddate': -1}
+        params = self.paramsResolver(parametry)
 
-        for p in parametry:
-            if p.split(':')[0] == 'city':
-                params['city'] = p.split(':')[1]
-            elif p.split(':')[0] == 'date':
-                params['date'] = p.split(':')[1]
-            elif p.split(':')[0] == 'startdate':
-                params['startdate'] = p.split(':')[1]
-            elif p.split(':')[0] == 'enddate':
-                params['enddate'] = p.split(':')[1]
+        if(params == 0 or params['startdate'] != -1 or params['enddate'] != -1 or params['date'] == -1):
+            print('Invalid input')
+            return
+        
+        try:
+            if(params['city'] != ''):
+                if(params['date'] != -1):
+        
+                        city = params['city']
+                        date = params['date']
+                        value = data[city][date][info]
 
-        if(params['city'] != ''):
-            if(params['date'] != -1):
-                try:
-                    city = params['city']
-                    date = params['date']
-                    value = data[city][date][info]
+                        if(info == 'relhum'):
+                            info = 'humidity'
+                            value = (int)(value*1000/10)
+                        
+                        if(info == 'ap'):
+                            info = 'pressure'
 
-                    if(info == 'relhum'):
-                        info = 'humidity'
-                        value = (int)(value*1000/10)
-                    
-                    if(info == 'ap'):
-                        info = 'pressure'
-
-                    print(f'city:{city} date:{date} {info}:{value}')
-                except:
-                    print('Invalid input')
+                        print(f'city:{city} date:{date} {info}:{value}')
+        except:
+            print('Invalid input')
     
     def maxInfo(self, parametry, info):
-        params = {'city': '', 'date': -1, 'startdate': -1, 'enddate': -1}
+        params = self.paramsResolver(parametry)
 
-        for p in parametry:
-            if p.split(':')[0] == 'city':
-                params['city'] = p.split(':')[1]
-            elif p.split(':')[0] == 'date':
-                params['date'] = p.split(':')[1]
-            elif p.split(':')[0] == 'startdate':
-                params['startdate'] = p.split(':')[1]
-            elif p.split(':')[0] == 'enddate':
-                params['enddate'] = p.split(':')[1]
-        
+        if(params == 0):
+            print('Invalid input' or params['date'] != -1 or params['startdate'] == -1 or params['enddate'] == -1)
+            return
+
         try:
             city = params['city']
             start = params['startdate']
@@ -111,109 +116,99 @@ class PrikazHandler:
             print('Invalid input')
 
     def fistRankCity(self, parametry, info):
-        params = {'city': '', 'date': -1, 'startdate': -1, 'enddate': -1}
-        for p in parametry:
-            if p.split(':')[0] == 'city':
-                params['city'] = p.split(':')[1]
-            elif p.split(':')[0] == 'date':
-                params['date'] = p.split(':')[1]
-            elif p.split(':')[0] == 'startdate':
-                params['startdate'] = p.split(':')[1]
-            elif p.split(':')[0] == 'enddate':
-                params['enddate'] = p.split(':')[1]
+        params = self.paramsResolver(parametry)
 
-        date = params['date']
-        
+        if(params == 0 or params['startdate'] != -1 or params['enddate'] != -1 or params['date'] == -1):
+            print('Invalid input')
+            return
 
-        if(info == 'warmestcity'):
-            max = -1000
-            result = {}
-            for city in data.keys():
-                if max < data[city][date]['temp']:
-                    max = data[city][date]['temp']
-                    result = {'city': city, 'date': date}
-            warmestCity = result['city']
-            warmestDate = result['date']
-            print(f'city:{warmestCity} date:{warmestDate} temp:{max}')
-        
-        if(info == 'coldestcity'):
-            min = 1000
-            result = {}
-            for city in data.keys():
-                if min > data[city][date]['temp']:
-                    min = data[city][date]['temp']
-                    result = {'city': city, 'date': date}
-            coldestCity = result['city']
-            coldestDate = result['date']
-            print(f'city:{coldestCity} date:{coldestDate} temp:{min}')
+        try:
+            date = params['date']
+            if(info == 'warmestcity'):
+                max = -1000
+                result = {}
+                for city in data.keys():
+                    if max < data[city][date]['temp']:
+                        max = data[city][date]['temp']
+                        result = {'city': city, 'date': date}
+                warmestCity = result['city']
+                warmestDate = result['date']
+                print(f'city:{warmestCity} date:{warmestDate} temp:{max}')
+            
+            if(info == 'coldestcity'):
+                min = 1000
+                result = {}
+                for city in data.keys():
+                    if min > data[city][date]['temp']:
+                        min = data[city][date]['temp']
+                        result = {'city': city, 'date': date}
+                coldestCity = result['city']
+                coldestDate = result['date']
+                print(f'city:{coldestCity} date:{coldestDate} temp:{min}')
+        except:
+            print('Invalid input')
 
     def graphGenerate(self, parametry, info):
-        params = {'city': '', 'date': -1, 'startdate': -1, 'enddate': -1}
-        for p in parametry:
-            if p.split(':')[0] == 'city':
-                params['city'] = p.split(':')[1]
-            elif p.split(':')[0] == 'date':
-                params['date'] = p.split(':')[1]
-            elif p.split(':')[0] == 'startdate':
-                params['startdate'] = p.split(':')[1]
-            elif p.split(':')[0] == 'enddate':
-                params['enddate'] = p.split(':')[1]
-        
-        city = params['city']
-        start = params['startdate']
-        end = params['enddate']
+        params = self.paramsResolver(parametry)
 
-        if(city == '' or start == '' or end == ''):
+        if(params == 0 or params['date'] != -1 or params['startdate'] == -1 or params['enddate'] == -1):
             print('Invalid input')
-           
-        else:
-            maxTemp = -1000
-            minTemp = 1000
-            dateCount = 0
-            for date in data[city]:
-                if int(start) <= int(date) <= int(end):
-                    dateCount += 1
-                    if maxTemp < data[city][date][info]:
-                        maxTemp = data[city][date][info]
-                    if minTemp > data[city][date][info]:
-                        minTemp = data[city][date][info]
-            
-            if(dateCount <= 50):
-                sloupce =[]
-                for date in data[city]:
-                    if int(start) <= int(date) <= int(end):
-                        sloupce.append(data[city][date][info])
-                
-                self.vykrasiGraph(sloupce)       
+            return
 
+        try:
+            city = params['city']
+            start = params['startdate']
+            end = params['enddate']
+
+            if(city == '' or start == '' or end == ''):
+                print('Invalid input')
             else:
-
-                average = dateCount % 50
-
-                n1 = (dateCount//50) + 1
-                n2 = (dateCount//50)
-
-                tmp = []
-                sloupce = []
-
+                maxTemp = -1000
+                minTemp = 1000
+                dateCount = 0
                 for date in data[city]:
                     if int(start) <= int(date) <= int(end):
+                        dateCount += 1
+                        if maxTemp < data[city][date][info]:
+                            maxTemp = data[city][date][info]
+                        if minTemp > data[city][date][info]:
+                            minTemp = data[city][date][info]
+                
+                if(dateCount <= 50):
+                    sloupce =[]
+                    for date in data[city]:
+                        if int(start) <= int(date) <= int(end):
+                            sloupce.append(data[city][date][info])
+                    
+                    self.vykrasiGraph(sloupce)       
+                else:
+                    average = dateCount % 50
 
-                        tmp.append(data[city][date][info])
+                    n1 = (dateCount//50) + 1
+                    n2 = (dateCount//50)
 
-                        if average > 0:
-                            if len(tmp) == n1:
-                                sloupce.append((int)(sum(tmp))/n1)
-                                tmp = []
-                                average -= 1
-                        
-                        else:
-                            if len(tmp) == n2:
-                                sloupce.append((int)(sum(tmp))/n2)
-                                tmp = []
+                    tmp = []
+                    sloupce = []
 
-                # print(sloupce)       
-                self.vykrasiGraph(sloupce)
+                    for date in data[city]:
+                        if int(start) <= int(date) <= int(end):
+
+                            tmp.append(data[city][date][info])
+
+                            if average > 0:
+                                if len(tmp) == n1:
+                                    sloupce.append((int)(sum(tmp))/n1)
+                                    tmp = []
+                                    average -= 1
+                            
+                            else:
+                                if len(tmp) == n2:
+                                    sloupce.append((int)(sum(tmp))/n2)
+                                    tmp = []
+        
+                    self.vykrasiGraph(sloupce)
+        except:
+            print('Invalid input')
 
     def vykrasiGraph(self, pole):
         maxTemp = -1000
@@ -224,7 +219,6 @@ class PrikazHandler:
                 if minTemp > value:
                     minTemp = value
         
-    
         step = (maxTemp - minTemp) / 19
 
         arrValueCol = []
@@ -251,17 +245,10 @@ class PrikazHandler:
 
 pole_kompletnichPrikazu = []
 
-# Opening JSON file
 f = open('data2.json')
 data = json.load(f)
-# Iterating through the json
-# list
-# print(data)
-# print(data['Prague']['20210101'])
-# for i in data:
-#     print(data[i])
-# Closing file
 f.close()
+
 
 for line in sys.stdin:
     p = PrikazHandler(line)
